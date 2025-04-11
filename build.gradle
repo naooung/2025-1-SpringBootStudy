@@ -35,3 +35,21 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+// 서브 모듈을 위해 추가
+processResources {
+    dependsOn 'copyResources'
+}
+
+tasks.register('copyResources', Copy) {
+    from './2025-1-SpringBootStudy-Config'  // 외부 설정 폴더 중
+    include '*.properties'                  // 환경변수를 가지고 올 예정
+    into 'src/main/resources/'              // 이 경로로 가져온다!
+}
+
+test {
+    doFirst {
+        def profile = project.hasProperty('profile') ? project.property('profile').toString() : 'local'
+        jvmArgs = ["-Dspring.profiles.active=${profile}"]
+    }
+}
